@@ -11,7 +11,7 @@ namespace StereoKitUWPProject
     }
     class Program
     {
-        static Entity[] displayUI(Entity[] entities, ref Pose windowPose, ref bool rulerActive, ref float slider, Random rand)
+        static Entity[] displayUI(Entity[] entities, ref Pose windowPose, ref Pose diskPose, ref bool rulerActive, ref float slider, Random rand)
         {
             Entity[] result = entities;
             UI.WindowBegin("Window", ref windowPose, new Vec2(20f, 0f) * U.cm, UIWin.Normal);
@@ -38,6 +38,11 @@ namespace StereoKitUWPProject
                 result[entities.Length] = newCube;
             }
 
+            Model disk = Model.FromFile("test.glb");
+            UI.HandleBegin("Clip", ref diskPose, disk.Bounds);
+            Renderer.Add(disk, Matrix.Identity);
+            UI.HandleEnd();
+
             UI.Toggle("Active Ruler", ref rulerActive);
 
             if (UI.Button("Exit")) {
@@ -62,6 +67,7 @@ namespace StereoKitUWPProject
             var rulerColor = Color.HSV(0.58f, 0.9f, 0.9f);
 
             Pose windowPose = new Pose(0f, 0f, -0.50f, Quat.LookDir(1f, 0f, 1f));
+            Pose diskPose = new Pose(0f, 0.3f, -0.50f, Quat.LookDir(1f, 0f, 1f));
             bool showHeader = true;
             float slider = 0.5f;
 
@@ -145,7 +151,7 @@ namespace StereoKitUWPProject
                     entities[i].model.Draw(entities[i].pose.ToMatrix(), entities[i].color);
                 }
 
-                entities = displayUI(entities, ref windowPose, ref rulerActive, ref slider, rand);
+                entities = displayUI(entities, ref windowPose, ref diskPose, ref rulerActive, ref slider, rand);
             })) ;
             SK.Shutdown();
         }
